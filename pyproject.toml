@@ -3,10 +3,10 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "ballsdex-crafting"
+name = "ballsdex-event"
 version = "0.0.0"
 
-description = "Crafting package for BallsDex V3"
+description = "Events package for BallsDex V3"
 license = "MIT"
 authors = [
     { name = "Haymooed" },
