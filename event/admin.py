@@ -34,7 +34,7 @@ class EventAdmin(admin.ModelAdmin):
         (
             "Basic Information",
             {
-                "fields": ("name", "description", "enabled"),
+                "fields": ("name", "description", "image_url", "enabled"),
             },
         ),
         (
