@@ -43,6 +43,10 @@ async def create_event_embed(event: Event) -> discord.Embed:
         timestamp=timezone.now(),
     )
 
+    # Add image if available
+    if event.image_url:
+        embed.set_image(url=event.image_url)
+
     # Status field
     embed.add_field(name="Status", value=status_text, inline=True)
 
@@ -109,8 +113,22 @@ class EventCog(commands.GroupCog, name="event"):
 
     # ---- Player commands ----
 
+    async def event_autocomplete(self, interaction: Interaction, current: str) -> list[app_commands.Choice[str]]:
+        """Autocomplete function for event selection."""
+        # Get all enabled events
+        events = Event.objects.filter(enabled=True).order_by("name")
+        event_list = await sync_to_async(list)(events.values_list("name", flat=True))
+
+        # Filter based on current input (case-insensitive)
+        if current:
+            event_list = [name for name in event_list if current.lower() in name.lower()]
+
+        # Return up to 25 choices (Discord limit)
+        return [app_commands.Choice(name=name, value=name) for name in event_list[:25]]
+
     @app_commands.command(name="info", description="View detailed information about a specific event.")
-    @app_commands.describe(event="The name of the event to view")
+    @app_commands.describe(event="Select an event to view")
+    @app_commands.autocomplete(event="event_autocomplete")
     @app_commands.checks.bot_has_permissions(send_messages=True, embed_links=True)
     async def event_info(self, interaction: Interaction, event: str):
         """View information about a specific event."""
@@ -143,8 +161,22 @@ class BallsEventCog(commands.GroupCog, name="balls"):
     def qualified_name(self) -> str:
         return "balls"
 
+    async def event_autocomplete(self, interaction: Interaction, current: str) -> list[app_commands.Choice[str]]:
+        """Autocomplete function for event selection."""
+        # Get all enabled events
+        events = Event.objects.filter(enabled=True).order_by("name")
+        event_list = await sync_to_async(list)(events.values_list("name", flat=True))
+
+        # Filter based on current input (case-insensitive)
+        if current:
+            event_list = [name for name in event_list if current.lower() in name.lower()]
+
+        # Return up to 25 choices (Discord limit)
+        return [app_commands.Choice(name=name, value=name) for name in event_list[:25]]
+
     @app_commands.command(name="event", description="View detailed information about a specific event.")
-    @app_commands.describe(event="The name of the event to view")
+    @app_commands.describe(event="Select an event to view")
+    @app_commands.autocomplete(event="event_autocomplete")
     @app_commands.checks.bot_has_permissions(send_messages=True, embed_links=True)
     async def balls_event(self, interaction: Interaction, event: str):
         """View information about a specific event via /balls event."""
