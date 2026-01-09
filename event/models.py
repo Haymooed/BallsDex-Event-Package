@@ -21,6 +21,11 @@ class Event(models.Model):
         blank=True,
         help_text="Description of the event",
     )
+    image_url = models.URLField(
+        blank=True,
+        null=True,
+        help_text="URL to an image for this event (displayed in the embed)",
+    )
     enabled = models.BooleanField(
         default=True,
         help_text="Whether this event is visible to players",
