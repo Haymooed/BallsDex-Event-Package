@@ -1,13 +1,11 @@
+import logging
+import textwrap
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ballsdex.core.bot import BallsDexBot
 
-
-async def setup(bot: "BallsDexBot"):
-    from .cog import EventCog
-
-    await bot.add_cog(EventCog(bot))
+log = logging.getLogger(__name__)
 
 LOGO = textwrap.dedent(r"""
     +---------------------------------------+
@@ -20,5 +18,6 @@ LOGO = textwrap.dedent(r"""
 async def setup(bot: "BallsDexBot"):
     print(LOGO)
     log.info("Loading event package...")
-    await bot.add_cog(Event(bot))
+    from .cog import EventCog
+    await bot.add_cog(EventCog(bot))
     log.info("Event package loaded successfully!")
