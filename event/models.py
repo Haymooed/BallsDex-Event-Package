@@ -7,10 +7,7 @@ from bd_models.models import Ball
 
 
 class Event(models.Model):
-    """
-    An event that groups balls together for informational purposes.
-    Events can be permanent or limited-time.
-    """
+
 
     name = models.CharField(
         max_length=128,
@@ -68,10 +65,7 @@ class Event(models.Model):
         return self.name
 
     def get_status(self) -> str:
-        """
-        Get the current status of the event.
-        Returns: 'permanent', 'active', 'upcoming', or 'ended'
-        """
+
         if self.is_permanent:
             return "permanent"
 
@@ -85,7 +79,6 @@ class Event(models.Model):
             return "active"
 
     def is_currently_active(self) -> bool:
-        """Check if the event is currently active (permanent or within date range)."""
         if self.is_permanent:
             return True
 

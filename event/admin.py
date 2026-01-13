@@ -13,7 +13,6 @@ if TYPE_CHECKING:
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
-    """Admin for events."""
 
     list_display = (
         "id",
@@ -69,28 +68,24 @@ class EventAdmin(admin.ModelAdmin):
 
     @admin.display(description="Status")
     def status_display(self, obj: Event) -> str:
-        """Display the current status of the event."""
         status = obj.get_status()
         status_map = {
-            "permanent": "🟢 Permanent",
-            "active": "🟢 Active",
-            "upcoming": "🟡 Upcoming",
-            "ended": "🔴 Ended",
+            "permanent": "Permanent",
+            "active": "Active",
+            "upcoming": "Upcoming",
+            "ended": "Ended",
         }
         return status_map.get(status, status.title())
 
     @admin.display(description="Included Balls")
     def ball_count(self, obj: Event) -> str:
-        """Display the number of included balls."""
         count = obj.included_balls.count()
         return f"{count} ball{'s' if count != 1 else ''}"
 
     @admin.display(description="Important Balls")
     def important_ball_count(self, obj: Event) -> str:
-        """Display the number of important balls."""
         count = obj.important_balls.count()
         return f"{count} ball{'s' if count != 1 else ''}"
 
     def get_queryset(self, request):
-        """Optimize queryset with prefetch."""
         return super().get_queryset(request).prefetch_related("included_balls", "important_balls")

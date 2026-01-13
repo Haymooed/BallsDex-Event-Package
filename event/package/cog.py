@@ -18,24 +18,18 @@ Interaction = discord.Interaction["BallsDexBot"]
 
 
 def format_datetime(dt: datetime) -> str:
-    """Format a datetime for display in Discord."""
     if dt is None:
         return "N/A"
-    # Format as: Jan 1, 2024 at 12:00 PM
     return dt.strftime("%b %d, %Y at %I:%M %p")
 
 
 async def event_autocomplete(interaction: Interaction, current: str) -> list[app_commands.Choice[str]]:
-    """Autocomplete function for event selection."""
-    # Get all enabled events
     events = Event.objects.filter(enabled=True).order_by("name")
     event_list = await sync_to_async(list)(events.values_list("name", flat=True))
 
-    # Filter based on current input (case-insensitive)
     if current:
         event_list = [name for name in event_list if current.lower() in name.lower()]
 
-    # Return up to 25 choices (Discord limit)
     return [app_commands.Choice(name=name, value=name) for name in event_list[:25]]
 
 
@@ -43,10 +37,10 @@ async def create_event_embed(event: Event) -> discord.Embed:
     """Create a Discord embed for an event."""
     status = event.get_status()
     status_map = {
-        "permanent": ("🟢 Permanent Event", discord.Color.green()),
-        "active": ("🟢 Active", discord.Color.green()),
-        "upcoming": ("🟡 Upcoming", discord.Color.gold()),
-        "ended": ("🔴 Ended", discord.Color.red()),
+        "permanent": ("Permanent Event", discord.Color.green()),
+        "active": ("Active", discord.Color.green()),
+        "upcoming": ("Upcoming", discord.Color.gold()),
+        "ended": ("Ended", discord.Color.red()),
     }
     status_text, color = status_map.get(status, ("Unknown", discord.Color.default()))
 
@@ -57,14 +51,11 @@ async def create_event_embed(event: Event) -> discord.Embed:
         timestamp=timezone.now(),
     )
 
-    # Add image if available
     if event.image_url:
         embed.set_image(url=event.image_url)
 
-    # Status field
     embed.add_field(name="Status", value=status_text, inline=True)
 
-    # Availability field
     if event.is_permanent:
         availability = "**Permanent Event**"
     else:
@@ -74,7 +65,6 @@ async def create_event_embed(event: Event) -> discord.Embed:
 
     embed.add_field(name="Availability", value=availability, inline=True)
 
-    # Included Balls
     included_balls = await sync_to_async(list)(event.included_balls.all())
     if included_balls:
         ball_names = [ball.country for ball in included_balls[:20]]  # Limit to 20 for display
@@ -89,7 +79,6 @@ async def create_event_embed(event: Event) -> discord.Embed:
     else:
         embed.add_field(name="Included Balls", value="No balls included.", inline=False)
 
-    # Important/Featured Balls
     important_balls = await sync_to_async(list)(event.important_balls.all())
     if important_balls:
         important_names = [ball.country for ball in important_balls[:10]]  # Limit to 10 for display
@@ -108,7 +97,6 @@ async def create_event_embed(event: Event) -> discord.Embed:
 
 
 class EventCog(commands.GroupCog, name="event"):
-    """View information about events and their associated balls."""
 
     def __init__(self, bot: "BallsDexBot"):
         self.bot = bot
@@ -119,7 +107,6 @@ class EventCog(commands.GroupCog, name="event"):
         return "event"
 
     async def _get_event_by_name(self, name: str) -> Event | None:
-        """Get an event by name (case-insensitive)."""
         try:
             return await Event.objects.aget(name__iexact=name, enabled=True)
         except Event.DoesNotExist:
@@ -145,5 +132,4 @@ class EventCog(commands.GroupCog, name="event"):
         await interaction.followup.send(embed=embed)
 
 
-# Export the helper function and cogs for potential use by the main bot
 __all__ = ["EventCog", "create_event_embed"]
