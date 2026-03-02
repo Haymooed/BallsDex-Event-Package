@@ -1,4 +1,5 @@
 # BallsDex V3 Event Info Package 🎉
+[![Support me on Patreon](https://img.shields.io/badge/Patreon-F96854?style=for-the-badge&logo=patreon&logoColor=white)](https://www.patreon.com/MarketDexOfficial?utm_campaign=creatorshare_creator)
 ---
 
 ## 📦 Installation
